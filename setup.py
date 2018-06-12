@@ -18,4 +18,10 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ),
+    install_requires=[
+        'regex==2017.4.29',
+        'nltk==3.2.4',
+        'PyNLPl==1.1.8',
+    ],
+    include_package_data=True,
 )

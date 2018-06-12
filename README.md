@@ -8,8 +8,7 @@ The original vn.vitk project is [here](https://github.com/phuonglh/vn.vitk).
 # Usage
 Simplest usage as below.
 
-```
-#!python
+```python
 from pyVitk import Tokenizer
 
 t = Tokenizer()

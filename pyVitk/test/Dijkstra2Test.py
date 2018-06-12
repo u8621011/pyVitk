@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 import unittest
 from pyVitk.Dijkstra2 import Graph, dijkstra, shortest_path
 

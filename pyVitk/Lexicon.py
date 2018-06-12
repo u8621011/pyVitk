@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 import xml.etree.ElementTree as etree
 import sys
 from nltk.collections import Trie

@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 # graph class inspired by https://gist.github.com/econchick/4666413
 # only run this in python 3!!! (because 'math.inf' is used)
 import collections

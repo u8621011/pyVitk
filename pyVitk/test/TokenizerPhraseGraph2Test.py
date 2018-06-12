@@ -1,3 +1,4 @@
+# coding=UTF-8
 import unittest
 import logging
 from pyVitk.Tokenizer import PhraseGraph2, Tokenizer

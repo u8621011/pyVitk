@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 from typing import Dict, List
 from queue import PriorityQueue
 

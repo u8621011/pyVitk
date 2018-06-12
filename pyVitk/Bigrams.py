@@ -1,5 +1,6 @@
-from pynlpl.lm import lm
+# coding=UTF-8
 
+from pynlpl.lm import lm
 
 class Bigrams(object):
     def __init__(self, bigramARPAFilname: str):

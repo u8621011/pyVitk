@@ -126,7 +126,7 @@ class PhraseGraph(object):
             if len(self.edges[i + 1]) == 0: # i cannot reach by any previous node
                 self.edges[i + 1].append(i)
         logger.debug('Edges built: {}'.format(self.edges))
-
+  
     def shortestPaths(self) -> list:
         """
         Finds all shortest paths from the first node to the last node of this graph. 

@@ -2,7 +2,7 @@
 
 import unittest
 import logging
-from pyVitk.Tokenizer import Tokenizer, PhraseGraph, SegmentationFunction
+from pyVitk.Tokenizer import Tokenizer, PhraseGraph, PhraseGraph2, SegmentationFunction
 
 # setup the logger
 logger = logging.getLogger(__name__)
@@ -17,27 +17,65 @@ if not len(logger.handlers):
 class TokenzierTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        logger.debug('Start TokenizerTest')
         cls.tokenizer = Tokenizer()
 
     @classmethod
     def tearDownClass(cls):
         cls.tokenizer = None
         cls.userTokenizer = None
+        logger.debug('End TokenizerTest')
 
-    def test_make_graph(self):
+    def test_phrase_graph_1(self):
         graph = PhraseGraph(self.tokenizer)
+        graph2 = PhraseGraph2(self.tokenizer)
 
-        graph.makeGraph('Wikipedia tiếng Việt là phiên bản tiếng Việt của dự án Wikipedia')
+        s = 'Wikipedia tiếng Việt là phiên bản tiếng Việt của dự án Wikipedia'
 
+        logger.debug('testing shortest path of string: ' + s)
+
+        # PhraseGraph
+        graph.makeGraph(s)
         logger.debug('Graph Making Result: {}'.format(graph))
 
         p = graph.shortestPaths()
-        logger.debug('Shortest paths Result: {}'.format(p))
+        logger.debug('Graph Shortest paths Result: {}'.format(p))
 
-    def test_shortest_paths(self):
+        # PhraseGraph2
+        graph2.makeGraph(s)
+        logger.debug('Graph2 Making Result: {}'.format(graph2))
+
+        p = graph2.shortestPath()
+        logger.debug('Graph2 Shortest paths Result: {}'.format(p))
+        "hay là một tổ_chức quốc_tế hoạt_động phi lợi_nhuận phi_chính_phủ và bao_gồm các thành_viên có trình_độ"
+
+    def test_phrase_graph_2(self):
         graph = PhraseGraph(self.tokenizer)
+        graph2 = PhraseGraph2(self.tokenizer)
 
         s = 'là phiên bản tiếng'
+
+        logger.debug('testing shortest path of string: ' + s)
+
+        #graph
+        graph.makeGraph(s)
+        logger.debug('Graph making result: {}'.format(graph))
+
+        p = graph.shortestPaths()
+        logger.debug('Graph Shortest Paths: {}'.format(p))
+
+        #graph2
+        graph2.makeGraph(s)
+        logger.debug('Graph2 making result: {}'.format(graph2))
+
+        p = graph2.shortestPath()
+        logger.debug('Graph2 Shortest Paths: {}'.format(p))
+
+    def test_phrase_graph_3(self):
+        graph = PhraseGraph(self.tokenizer)
+        graph2 = PhraseGraph2(self.tokenizer)
+
+        s = 'gần đây nhất mình thi'
 
         logger.debug('testing shortest path of string: ' + s)
 
@@ -45,6 +83,13 @@ class TokenzierTestCase(unittest.TestCase):
         logger.debug('Graph making result: {}'.format(graph))
 
         p = graph.shortestPaths()
+        logger.debug('Shortest Paths: {}'.format(p))
+
+        # graph 2
+        graph2.makeGraph(s)
+        logger.debug('Graph2 making result: {}'.format(graph2))
+
+        p = graph2.shortestPath()
         logger.debug('Shortest Paths: {}'.format(p))
 
     def test_tokenize_phrase(self):
@@ -58,18 +103,21 @@ class TokenzierTestCase(unittest.TestCase):
         s = 'Wikipedia tiếng Việt là phiên bản tiếng Việt của dự án Wikipedia.'
         t = self.tokenizer.tokenizeLine(s)
 
+        logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
 
     def test_tokenize_line2(self):
         s = 'Website được kích hoạt lần đầu tiên vào tháng 11 năm 2002, lúc đó chỉ có bài viết đầu tiên của dự án là bài Internet Society.[1] '
         t = self.tokenizer.tokenizeLine(s)
 
+        logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
 
     def test_tokenzie_line3(self):
         s = 'Vì dự án không có đủ người đóng góp, Wikipedia tiếng Việt không có thêm bài viết nào cho đến tháng 10 năm 2003 khi Trang Chính được viết,[2] và dự án Wikipedia tiếng Việt được xem như "khởi động lại nữa".'
         t = self.tokenizer.tokenizeLine(s)
 
+        logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
 
     def test_tokenzie_line4(self):
@@ -77,6 +125,7 @@ class TokenzierTestCase(unittest.TestCase):
 
         t = self.tokenizer.tokenizeLine(s)
 
+        logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
 
     def test_tokenize_line5(self):
@@ -84,6 +133,7 @@ class TokenzierTestCase(unittest.TestCase):
 
         t = self.tokenizer.tokenizeLine(s)
 
+        logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
 
     def test_tokenize_line6(self):
@@ -91,4 +141,13 @@ class TokenzierTestCase(unittest.TestCase):
 
         t = self.tokenizer.tokenizeLine(s)
 
+        logger.debug('Test tokenizeline, s: ' + s)
+        logger.debug('Tokenized Result: {}'.format(t))
+
+    def test_tokenize_line7(self):
+        s = "gần đây nhất mình thi"
+
+        t = self.tokenizer.tokenizeLine(s)
+
+        logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))

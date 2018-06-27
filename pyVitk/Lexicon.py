@@ -21,6 +21,34 @@ class Node(object):
             index += 1
         self.children.insert(index, newNode)
 
+    def insertWord(self, s: str, pos: int):
+        """ build the trie nodes from string
+        """
+        if pos == len(s):
+            # end char already exist?
+            for j in range(0, len(self.children)):
+                if self.children[j].c == '*':
+                    return
+
+            node = Node('*')
+            self.children.append(node)
+            return
+
+        # already have node of current char?
+        cur_node = None
+        for j in range(0, len(self.children)):
+            n = self.children[j]
+            if n.c == s[pos]:
+                cur_node = n
+                break
+
+        # not exist, create new node for current char
+        if not cur_node:
+            cur_node = Node(s[pos])
+            self.children.append(cur_node)
+
+        cur_node.insertWord(s, pos + 1)
+
     def hasWord(self, s: str, pos: int) -> bool:
         if pos == len(s):
             for j in range(0 , len(self.children)):
@@ -70,6 +98,14 @@ class Lexicon(object):
         self.numNodes += len(n.getchildren())
 
         return node
+
+    def insertWord(self, word: str):
+        if self.root:
+            self.root.insertWord(word, 0)
+        elif self.trie:
+            self.trie.insert(word)
+        else:
+            raise ValueError('Dunno the type of trie tree structure.')
 
     def hasWord(self, word: str) -> bool:
         if self.root:

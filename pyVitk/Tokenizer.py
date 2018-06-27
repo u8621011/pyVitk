@@ -454,6 +454,16 @@ class Tokenizer(object):
         else:
             self.bigrams = None
 
+    def insertLexicons(self, lexicons: list):
+        """runtime insert lexicon
+        """
+        insert_count = 0
+        for l in lexicons:
+            if not self.lexicon.hasWord(l):
+                self.lexicon.insertWord(l)
+                insert_count = insert_count + 1
+        logger.debug('The additional lexicons inserted: {}'.format(insert_count))
+            
     def tokenize(self, inputFilename, outputFilename):
         with open(inputFilename, 'r', encoding='utf8') as fin, open(outputFilename, 'w', encoding='utf8') as fout:
             lines = fin.readlines()

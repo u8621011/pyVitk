@@ -9,8 +9,7 @@ from .Bigrams import Bigrams
 from .Dijkstra import Dijkstra
 from .Dijkstra2 import Graph, shortest_path
 
-logger = logging.getLogger('pyVitk.Tokenizer')
-
+logger = logging.getLogger(__name__)
 
 class PhraseGraph2(object):
     def __init__(self, tokenizer: 'Tokenizer', bigrams: 'Bigrams' = None):

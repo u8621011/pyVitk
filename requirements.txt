@@ -1,0 +1,15 @@
+beautifulsoup4==4.6.0
+certifi==2018.4.16
+chardet==3.0.4
+httplib2==0.11.3
+idna==2.7
+isodate==0.6.0
+lxml==4.2.3
+nltk==3.2.4
+PyNLPl==1.1.8
+pyparsing==2.2.0
+rdflib==4.2.2
+regex==2017.4.29
+requests==2.19.1
+six==1.11.0
+urllib3==1.23

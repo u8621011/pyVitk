@@ -22,6 +22,8 @@ setuptools.setup(
         'regex==2017.4.29',
         'nltk==3.2.4',
         'PyNLPl==1.1.8',
+        'beautifulsoup4==4.6.0',
+        'requests==2.19.1',
     ],
     include_package_data=True,
 )

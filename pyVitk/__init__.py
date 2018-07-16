@@ -2,6 +2,7 @@
 
 from .Tokenizer import Tokenizer
 from .VNY2KParser import parse_vny2k
+from .ThiVienParser import parse_hanviet
 import logging
 
 logger = logging.getLogger(__name__)

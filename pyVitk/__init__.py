@@ -1,8 +1,8 @@
 # coding=UTF-8
 
 from .Tokenizer import Tokenizer
-from .VNY2KParser import parse_vny2k
-from .ThiVienParser import parse_hanviet
+import pyVitk.crawler
+from .DictionaryLexicon import DictionaryLexicon
 import logging
 
 logger = logging.getLogger(__name__)

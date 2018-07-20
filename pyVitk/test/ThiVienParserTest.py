@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pyVitk.ThiVienParser import parse_hanviet
+from pyVitk.crawler.ThiVienParser import parse_hanviet
 
 class ThiVienParserTest(TestCase):
     def test_parse_from_tchinese(self):

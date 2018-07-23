@@ -21,6 +21,8 @@ import requests
 from bs4 import BeautifulSoup
 import regex
 import logging
+from pyVitk.DictionaryLexicon import DictionaryLexicon
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,14 +53,16 @@ def parse_vny2k(w):
         for tbl in soup.find_all('table'):
             trs = tbl.find_all('tr')
             if len(trs[0].find_all('td')) == 2: # the found lexicon have 2 td tags
+                result = DictionaryLexicon()
+                result.source_language = 'zh-TW'
+                result.target_language = 'vi-VN'
+                result.source_title = w
+                result.synonyms = []
+
                 for r in tbl.find_all('tr')[1:]:
                     tds = r.find_all('td')
 
-                    result = {
-                        "SearchWord" : w,
-                        "VietnameseWord" : tds[0].string,
-                        "Synonyms": [],
-                    }
+                    result.target_title = tds[0].string
 
                     detail_string = " ".join(tds[1].strings)
                     m = re_synonyms_part.match(detail_string)
@@ -68,15 +72,16 @@ def parse_vny2k(w):
                         m_syn = re_synonyms_item.finditer(synonyms_string)
                         for cur_m in m_syn:
                             logger.debug('stext of sym part: %r', cur_m.group('stext'))
-                            result['Synonyms'].append(cur_m.group('stext'))
+                            result.synonyms.append(cur_m.group('stext'))
                     else:
                         logger.debug('sym part not found')
 
                     m_hv = re_hanviet_part.search(detail_string)
                     if m_hv:
-                        result['Pinyin'] = m_hv.group('pinyin')
-                        result['HanViet'] = m_hv.group('hanviet')
-                        result['ChineseWord'] = m_hv.group('chinese')
+                        result.pron_systems.append({
+                            'HanViet': m_hv.group('hanviet'),
+                            'Pinyin': m_hv.group('pinyin')
+                        })
                         logger.debug('full match of hanviet part: %r', m_hv.group(0))
                         logger.debug('chinese of hanviet: %r', m_hv.group('chinese'))
                         logger.debug('pinyin of hanviet: %r', m_hv.group('pinyin'))
@@ -93,21 +98,3 @@ def parse_vny2k(w):
         logger.error('Cannot query from site:%r, status_code: %r', url_hanviet, r.status_code)
     return result_bank
 
-if __name__ == '__main__':
-    logger = logging.getLogger(__name__)
-    if not len(logger.handlers):
-        # file handler
-        hdlr = logging.FileHandler('pyVitk.log', encoding='utf8')
-        formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-        hdlr.setFormatter(formatter)
-        logger.addHandler(hdlr) 
-        logger.setLevel(logging.DEBUG)
-        
-    r = parse_vny2k('中文')
-    logger.debug('parse result: %r', r)
-
-    r = parse_vny2k('句子')
-    logger.debug('parse result: %r', r)
-
-    r = parse_vny2k('辭典')
-    logger.debug('parse result: %r', r)

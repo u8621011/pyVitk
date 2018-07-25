@@ -14,6 +14,7 @@ if not len(logger.handlers):
     logger.addHandler(hdlr) 
     logger.setLevel(logging.DEBUG)
 
+
 class TokenzierTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -151,3 +152,6 @@ class TokenzierTestCase(unittest.TestCase):
 
         logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
+
+    def test_serialize_to_xml(self):
+        self.tokenizer.to_lexicon_xml_file('test.xml')

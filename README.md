@@ -16,9 +16,12 @@ sentence = "bài viết chọn lọc alt hình ảnh chọn lọc"
 tokens = t.tokenizeLine(sentence, concat=True)
 
 print("tokenize result: {}".format(str(tokens)))
+
+t.to_lexicon_xml_file('xml_filename_to_serialize_lexicons')
+
 ```
 
-- parse_vny2k: to crawl and parse dictionary of han-viet.net
+- crawlers samples
 
 Usage
 ```python

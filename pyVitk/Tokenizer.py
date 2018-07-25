@@ -453,15 +453,25 @@ class Tokenizer(object):
         else:
             self.bigrams = None
 
+    def to_lexicon_xml_file(self, ofile: str):
+        """Serialize the lexicon sturcture into xml file
+        """
+        self.lexicon.serialize_to_xml(ofile)
+
     def insertLexicons(self, lexicons: list):
         """runtime insert lexicon
-        """
-        insert_count = 0
+
+            :param lexicons: the list of inserting lexicon string
+            :returns: the list of lexicons inserted
+            """
+        inserted = []
         for l in lexicons:
             if not self.lexicon.hasWord(l):
+                inserted.append(l)
                 self.lexicon.insertWord(l)
-                insert_count = insert_count + 1
-        logger.debug('The additional lexicons inserted: {}'.format(insert_count))
+        logger.debug('The additional lexicons inserted: {}'.format(len(inserted)))
+
+        return inserted
             
     def tokenize(self, inputFilename, outputFilename):
         with open(inputFilename, 'r', encoding='utf8') as fin, open(outputFilename, 'w', encoding='utf8') as fout:

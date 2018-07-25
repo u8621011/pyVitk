@@ -133,6 +133,37 @@ class Lexicon(object):
         else:
             return False
 
+    def serialize_to_xml(self, ofile: str):
+        if self.root:
+            # build ElementTree from root structure
+            et_root = etree.Element('n', attrib={'c': '_'})
+            if len(self.root.children) > 0:
+                for child in self.root.children:
+                    if child.c == '*':
+                        etree.SubElement(et_root, 'n', {'c': '*'})
+                    else:
+                        et_child = etree.SubElement(et_root, 'n', {'c': child.c})
+                        self.build_etree_from_node(et_child, child)
+            else:
+                etree.SubElement(et_root, 'n', {'c': '*'})
+
+            tree = etree.ElementTree(et_root)
+            tree.write(ofile, encoding='utf-8', xml_declaration=True)
+        else:
+            raise NotImplementedError
+
+    def build_etree_from_node(self, et_parent, node_parent):
+        if node_parent.children is not None and len(node_parent.children) > 0:
+            for child in node_parent.children:
+                if child.c == '*':
+                    etree.SubElement(et_parent, 'n', {'c': '*'})
+                else:
+                    et_child = etree.SubElement(et_parent, 'n', {'c': child.c})
+                    self.build_etree_from_node(et_child, child)
+        else:
+            etree.SubElement(et_parent, 'n', {'c': '*'})
+
+
     def flattenToFile(self, outFilename: str):
         f = open(outFilename, 'w',  encoding='utf8')
         curCharList = []

@@ -22,9 +22,14 @@ print("tokenize result: {}".format(str(tokens)))
 
 Usage
 ```python
-from pyVitk import parse_vny2k
+from pyVitk import crawler
+import json
 
-r = parse_vny2k('中文')
+# support zh-TW to vi-VN currently. will return DictionaryLexicon structure
+results = crawler.parse_vdict('zh-TW', 'vi-VN', '中文')
+results_y2k = crawler.parse_vny2k('中文')
 
-print(r)
+print(json.dumps(results.__dict__))
+print(json.dumps(results_y2k.__dict__))
+
 ```

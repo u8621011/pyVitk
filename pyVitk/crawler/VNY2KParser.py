@@ -79,8 +79,12 @@ def parse_vny2k(w):
                     m_hv = re_hanviet_part.search(detail_string)
                     if m_hv:
                         result.pron_systems.append({
-                            'HanViet': m_hv.group('hanviet'),
-                            'Pinyin': m_hv.group('pinyin')
+                            'name': 'HanViet',
+                            'pronunciation': m_hv.group('hanviet')
+                        })
+                        result.pron_systems.append({
+                            'name': 'Pinyin',
+                            'pronunciation': m_hv.group('pinyin'),
                         })
                         logger.debug('full match of hanviet part: %r', m_hv.group(0))
                         logger.debug('chinese of hanviet: %r', m_hv.group('chinese'))

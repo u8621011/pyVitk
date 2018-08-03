@@ -49,7 +49,8 @@ def parse_vdict(src_lang, tar_lang, w):
             hv = tbl.find_all('div', class_='hv_NameTitle')
             if hv and len(hv) > 0:
                 lex.pron_systems.append({
-                    'HanViet': hv[0].a.string
+                    'name': 'HanViet',
+                    'pronunciation': hv[0].a.string
                 })
 
             meaning = tbl.find_all('blockquote')

@@ -2,17 +2,13 @@
 
 import unittest
 import logging
+from pyVitk.test.helper import setup_logging
 import pyVitk.Bigrams as Bigrams
 
 # setup the logger
+setup_logging()
 logger = logging.getLogger(__name__)
-if not len(logger.handlers):
-    # file handler
-    hdlr = logging.FileHandler('unittest.log', encoding='utf8')
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-    hdlr.setFormatter(formatter)
-    logger.addHandler(hdlr) 
-    logger.setLevel(logging.DEBUG)
+
 
 class BigramsTestCase(unittest.TestCase):
     def setUp(self):

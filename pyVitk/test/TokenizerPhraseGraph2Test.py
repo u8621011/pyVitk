@@ -1,18 +1,14 @@
 # coding=UTF-8
 import unittest
 import logging
+from pyVitk.test.helper import setup_logging
 from pyVitk.Tokenizer import PhraseGraph2, Tokenizer
 from pyVitk.Bigrams import Bigrams
 
 # setup the logger
+setup_logging()
 logger = logging.getLogger(__name__)
-if not len(logger.handlers):
-    # file handler
-    hdlr = logging.FileHandler('unittest.log', encoding='utf8')
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-    hdlr.setFormatter(formatter)
-    logger.addHandler(hdlr) 
-    logger.setLevel(logging.DEBUG)
+
 
 class TokenzierPhraseGraph2TestCase(unittest.TestCase):
     @classmethod

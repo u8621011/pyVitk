@@ -8,6 +8,8 @@ from .Lexicon import Lexicon
 from .Bigrams import Bigrams
 from .Dijkstra import Dijkstra
 from .Dijkstra2 import Graph, shortest_path
+from pyVitk.DataStructure import LexiconToken
+
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +138,7 @@ class PhraseGraph(object):
 
         return allPaths
 
-    def words(self, path: list) -> list:
+    def words(self, path: list, concat=False) -> list:
         """
         Gets a list of words specified by a given path.
         :param path: 
@@ -153,7 +155,10 @@ class PhraseGraph(object):
             lstSyllables = list()
             lstSyllables.append(self.syllables[i])
             for k in range(a[j] + 1, a[j + 1]):
-                lstSyllables.append(' ')
+                if concat:
+                    lstSyllables.append('_')
+                else:
+                    lstSyllables.append(' ')
                 lstSyllables.append((self.syllables[k]))
             tok.append(lstSyllables)
 
@@ -200,84 +205,110 @@ class SegmentationFunction(object):
     def __init__(self, tokenizer: 'Tokenizer'):
         self.tokenizer = tokenizer
 
-    def segment(self, sentence: str) -> list:
+    def segment(self, sentence: str, concat=False) -> list:
+        """
+        Segment the passed in sentence, caller must not call sentence.strip, segmentation function will do it to calculate the pricise term position in sentence.
+        :param sentence:
+        :return:
+        """
         tokens = []
 
-        sentence = sentence.strip()
-        if len(sentence) == 0:
+        s = sentence.lstrip()
+        if len(s) == 0:
             return tokens
 
-        s = sentence
+        # the first position of non-space char.
+        cur_pos = len(sentence) - len(s)
+
+        token_start_pos_base = cur_pos
         while True:
-            maxLen = 0
-            nextToken = None
-            tokenType = None
+            max_matched_len = 0
+            next_token = None
+            token_type = None
 
             # greedy search for the longest pattern from the beginning of 's'
-            logger.debug('Segmenting sentence: ' + s)
+            logger.debug('Segmenting sentence: %s', s)
             for k, p in self.tokenizer.patterns.items():
                 # return matchobject if matches
                 m = p.match(s)
                 if m:
-                    logger.debug('【{}】 matched: {}'.format(s, k))
-                    curLen = m.end(0) - m.start(0)
-                    if maxLen < curLen:
-                        maxLen = curLen
-                        nextToken = m.group(0)
-                        tokenType = k
-                        nextToken = nextToken.strip()
-                else:
-                    #logger.debug('Test {} with pattern {}: not matched'.format(s, p))
-                    pass
+                    logger.debug('【%s】 matched pattern: %s', s, k)
+                    cur_matched_len = m.end(0) - m.start(0)
+                    if max_matched_len < cur_matched_len:
+                        max_matched_len = cur_matched_len
+                        next_token = m.group(0)
+                        token_type = k
 
-            if tokenType:
-                logger.debug('longest matched pattern type: {}, token: {}'.format(tokenType, nextToken))
+                        # what pattern will have space in the begin or end of matched term?
+                        stripped_token = next_token.strip()
+                        if len(stripped_token) != len(next_token):
+                            logger.info('Found the case of token need to be stripped, token: [%s]', next_token)
+                            raise Exception('Found the case of token need to be stripped')
+
+            if token_type:
+                logger.debug('longest matched pattern type: %s, token: %s', token_type, next_token)
             else:
-                logger.debug('Cannot find the matched pattern.')
+                logger.debug('Cannot find the matched pattern. sentence: %s', s)
 
             # split off the longest token we found.
-            if nextToken:
-                s = s[maxLen:].strip()
+            if next_token:
+                string_left = s[max_matched_len:]
+                string_left_trimmed = s[max_matched_len:].lstrip()
+
                 # process the token we found
-                if 'name' in tokenType and len(s) > 0:
-                    tup = self.processName(nextToken, s)
-                    if len(tup[0]) != len(nextToken):
-                        nextToken = tup[0]
-                        s = tup[1]
-                        tokenType = 'word'
+                if 'name' in token_type and len(string_left_trimmed) > 0:
+                    tup = self.processName(next_token, string_left_trimmed)
+                    if len(tup[0]) != len(next_token):
+                        next_token = tup[0]
+                        s = string_left_trimmed = tup[1]
+                        token_type = 'word'
 
-                    logger.debug('appending new token, type: {}, token: {}'.format(tokenType, nextToken))
-                    tokens.append((tokenType, nextToken))
-                elif 'unit' in tokenType and len(s) > 0:
-                    tup = self.processUnit(nextToken, s)
-                    if len(tup[0]) > len(nextToken):
-                        nextToken = tup[0]
-                        s = tup[1]
-                        tokenType = "unit"
+                    logger.debug('appending new token, type: {}, token: {}'.format(token_type, next_token))
+                    tokens.append((token_type, next_token))
+                elif 'unit' in token_type and len(string_left_trimmed) > 0:
+                    tup = self.processUnit(next_token, string_left_trimmed)
+                    if len(tup[0]) > len(next_token):
+                        next_token = tup[0]
+                        s = string_left_trimmed = tup[1]
+                        token_type = "unit"
 
-                    logger.debug('appending new token, type: {}, token: {}'.format(tokenType, nextToken))
-                    tokens.append((tokenType, nextToken))
-                elif 'phrase' in tokenType:
-                    if nextToken.find(' ') > 0:    # multi-syllabic phrase
-                        if  self.tokenizer.classifier is not None:
+                    logger.debug('appending new token, type: {}, token: {}'.format(token_type, next_token))
+                    tokens.append((token_type, next_token))
+                elif 'phrase' in token_type:
+                    if next_token.find(' ') > 0:    # multi-syllabic phrase
+                        if self.tokenizer.classifier is not None:
                             raise NotImplementedError
                         else:
                             # segment the phrase using a phrase graph
-                            words = self.tokenizePhrase(nextToken)
+                            words = self.tokenizePhrase(next_token)
                             #words = self.tokenizePhrase2(nextToken)
                             if words is not None:
+                                token_start_pos = token_start_pos_base
                                 for i in range(len(words)):
-                                    logger.debug(
-                                        'appending new token, type: {}, token: {}'.format(tokenType, words[i]))
-                                    tokens.append(("word", words[i]))
+                                    if i != 0:
+                                        token_start_pos = token_end_pos + 1   # every token must be split by one space
+                                    token_end_pos = token_start_pos + len(words[i])
+                                    t = LexiconToken(type="word", text=words[i], start_char_pos=token_start_pos
+                                                     , end_char_pos=token_end_pos)
+                                    tokens.append(t)
                             else:
-                                logger.info('Error when tokenizing phrase: ' + nextToken)
+                                raise Exception('Error when tokenizing phrase: ' + next_token)
                     else:
-                        logger.debug(
-                            'appending new token, type: {}, token: {}'.format('word', nextToken))
-                        tokens.append(("word", nextToken))
+                        token_start_pos = token_start_pos_base
+                        token_end_pos = token_start_pos_base + max_matched_len
+                        t = LexiconToken(type="word", text=next_token, start_char_pos=token_start_pos,
+                                         end_char_pos=token_end_pos)
+                        tokens.append(t)
+                    s = string_left_trimmed
                 else:
-                    tokens.append((tokenType, nextToken))
+                    token_start_pos = token_start_pos_base
+                    token_end_pos = token_start_pos_base + max_matched_len
+                    t = LexiconToken(type=token_type, text=next_token, start_char_pos=token_start_pos,
+                                     end_char_pos=token_end_pos)
+                    tokens.append(t)
+                    s = string_left_trimmed
+                    token_start_pos_base = token_end_pos + (
+                                len(string_left) - len(string_left_trimmed))  # the next base
             else:
                 if len(s.strip()) > 0:
                     logger.warning('Unprocessed substring: ' + s)
@@ -486,28 +517,6 @@ class Tokenizer(object):
     def tokenizeLine(self, line: str, concat=False) -> list:
         seg = SegmentationFunction(self)
 
-        line = line.strip()
+        tokens = seg.segment(line, concat)
 
-        tokens = seg.segment(line)
-        lstRet = list()
-
-        for i in range(len(tokens)):
-            curToken = tokens[i]
-            if concat:
-                if (curToken[0] == 'phrase' or curToken[0] == 'word'):
-                    lstRet.append({
-                        'Type': curToken[0],
-                        'Text': curToken[1].replace(' ', '_')
-                    })
-                else:
-                    lstRet.append({
-                        'Type': curToken[0],
-                        'Text': curToken[1],
-                    })
-            else:
-                lstRet.append({
-                    'Type': curToken[0],
-                    'Text': curToken[1],
-                })
-
-        return lstRet
+        return tokens

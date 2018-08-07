@@ -1,11 +1,14 @@
 # example: i am a lowercase string.
-01:phrase	[\p{Ll}\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
+01:phrase	[\p{Lu}]{0,1}[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
+#01:phrase	[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))  # fix for tailing space error
+#01:phrase	[\p{Ll}\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
 # 01:phrase [aáàảãạăắằẳẵặâấầẩẫậbcdđeéèẻẽẹêếềểễệfghiíìỉĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvwxyýỳỷỹỵz\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)]+|$)(?<!http)(?<!https)<?<!ftp)
 # the original pattern for java won't match string likes http:\\www.google.com, but python version will match and capture string except http/https/ftp string. may be we should adjust the algorithm to do special pattern search before phrase patten.
 # 01:phrase	[aáàảãạăắằẳẵặâấầẩẫậbcdđeéèẻẽẹêếềểễệfghiíìỉĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvwxyýỳỷỹỵz\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)]+|$)
 
 # example: AAA.A
-02:allcaps	([A-Z]+)([A-Z\.])*[^a-z\)\W]
+#02:allcaps	([A-Z]+)([A-Z\.])*[^a-z\)\W]
+02:allcaps	([\p{Lu}]+)([\p{Lu}\.])*[^\p{Ll}\)]
 
 # complete latin char [a-zA-Z]
 # example: 29292ADB222
@@ -19,7 +22,8 @@
 # 03:entity2	^[a-zA-ZáàảãạăắằẳẵặâấầẩẫậđéèẻẽẹêếềểễệíìỉĩịýỳỷỹỵóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÝỲỶỸỴÓÒỎÕỌÔỐỒỔỠỢÚÙỦŨỤƯỨỪỬỮỰ]+(\d)+
 
 # example: ADFA11ADD333
-03:entity3	([\p{Lu}]+\d*)+
+03:entity3	([\p{Lu}]+\d+)+
+#03:entity3	([\p{Lu}]+\d*)+
 # below is the RE module version
 #03:entity3	^([A-ZÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÝỲỶỸỴÓÒỎÕỌÔỐỒỔỠỢÚÙỦŨỤƯỨỪỬỮỰ]+\d*)+
 
@@ -30,7 +34,7 @@
 
 # example: Ông ăn
 #04:name	([\p{Lu}][\p{L}&&[^\p{Lu}]]*)([\s+\-][\p{Lu}][\p{L}&&[^\p{Lu}]]*)*
-04:name	([\p{Lu}][\p{L}]*)([\s+\-][\p{Lu}][\p{L}]*)*
+#04:name	([\p{Lu}][\p{L}]*)([\s+\-][\p{Lu}][\p{L}]*)*
 # below is the RE module version
 # 04:name	^([A-ZÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÝỲỶỸỴÓÒỎÕỌÔỐỒỔỠỢÚÙỦŨỤƯỨỪỬỮỰ][a-záàảãạăắằẳãặâấầẩẫậđéèẻẽẹêếềểẽệíìỉĩịýỳỷỹỵóòỏõọôốồổỗợơớờởỡộúùủũụưứừửữự]*)([\s+\-][A-ZÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÝỲỶỸỴÓÒỎÕỌÔỐỒỔỠỢÚÙỦŨỤƯỨỪỬỮỰ][a-záàảãạăắằẳãặâấầẩẫậđéèẻẽẹêếềểẽệíìỉĩịýỳỷỹỵóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữự]+)*
 
@@ -64,7 +68,7 @@
 16:space	\s+
 17:special	[`~\!@#\$%\^&\*\-_\+=\|\\\:;"',<\.>/\?]+
 
-18:foreign	([\p{L}]+)(\-[\p{L}]+)*
+#18:foreign	([\p{L}]+)(\-[\p{L}]+)*
 
 19:domain	\w[\-\w]*\w+(\.\w+)+
 20:url	((http)|(https)|(ftp))\://\w[\-\w]*\w+(\.\w+)+(/[\w\-]+)*(\.\w+)?

@@ -2,21 +2,11 @@
 
 """"Parser for http://hvdic.thivien.net
 Will try to parse out the han viet relationship
-Return samples:
-
-[
-    {
-        "ChineseWord": "文",
-        "HanViet": "văn",
-    }, {
-        "ChineseWord": "文",
-        "HanViet": "vấn",
-    }
-]
 """
 
 import requests
 from bs4 import BeautifulSoup
+from pyVitk.DictionaryLexicon import DictionaryLexicon
 
 
 def parse_hanviet(w):
@@ -31,13 +21,18 @@ def parse_hanviet(w):
         data = r.text
         soup = BeautifulSoup(data, 'lxml')
 
+        lex = DictionaryLexicon()
+        lex.source_language = 'zh-TW'
+        lex.target_language = 'vi-VN'
+        lex.source_title = w
         for info_div in soup.find_all('div', class_='info'):
             hanviet_spans = info_div.find_all('span')
             for s in hanviet_spans:
-                result_bank.append({
-                    'ChineseWord': w,
-                    'HanViet': s.string,
+                lex.pron_systems.append({
+                    'name': 'HanViet',
+                    'pronunciation': s.string,
                 })
 
-    return result_bank
+        result_bank.append(lex)
 
+    return result_bank

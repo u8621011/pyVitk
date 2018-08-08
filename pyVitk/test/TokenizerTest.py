@@ -14,7 +14,8 @@ class TokenzierTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         logger.debug('Start TokenizerTest')
-        cls.tokenizer = Tokenizer()
+        cls.tokenizer = Tokenizer(case_sensitive=True)
+        cls.tokenizer_insensitive = Tokenizer(case_sensitive=False)
 
     @classmethod
     def tearDownClass(cls):
@@ -159,6 +160,23 @@ class TokenzierTestCase(TestCase):
         t = self.tokenizer.tokenizeLine(s)
         logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
+
+        t = self.tokenizer_insensitive.tokenizeLine(s)
+        logger.debug('Test insensitive tokenizeline, s: ' + s)
+        logger.debug('Tokenized Result: {}'.format(t))
+
+    def test_tokenize_line10(self):
+        s = "PHD | Xem Đi Xem Lại Cả 1000 Lần Mà Vẫn Không Thể Nhịn Được Cười | Funny Videos,"
+        t = self.tokenizer.tokenizeLine(s)
+        logger.debug('Test tokenizeline, s: ' + s)
+        logger.debug('Tokenized Result: {}'.format(t))
+
+    def test_tokenize_line11(self):
+        s = "BÍCH PHƯƠNG - Bao Giờ Lấy Chồng? [OFFICIAL M/V]"
+        t = self.tokenizer.tokenizeLine(s)
+        logger.debug('Test tokenizeline, s: ' + s)
+        logger.debug('Tokenized Result: {}'.format(t))
+
 
     def test_serialize_to_xml(self):
         self.tokenizer.to_lexicon_xml_file('test.xml')

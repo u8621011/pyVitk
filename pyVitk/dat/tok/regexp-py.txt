@@ -1,6 +1,11 @@
 # example: i am a lowercase string.
-01:phrase	[\p{Lu}]{0,1}[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
-#01:phrase	[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))  # fix for tailing space error
+01:phrase	\w+(?:\s\w+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
+
+# for begin char upper case allowed.
+#01:phrase	[\p{Lu}]{0,1}[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
+
+# fix for tailing space error
+#01:phrase	[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
 #01:phrase	[\p{Ll}\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
 # 01:phrase [aáàảãạăắằẳẵặâấầẩẫậbcdđeéèẻẽẹêếềểễệfghiíìỉĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvwxyýỳỷỹỵz\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)]+|$)(?<!http)(?<!https)<?<!ftp)
 # the original pattern for java won't match string likes http:\\www.google.com, but python version will match and capture string except http/https/ftp string. may be we should adjust the algorithm to do special pattern search before phrase patten.
@@ -8,7 +13,10 @@
 
 # example: AAA.A
 #02:allcaps	([A-Z]+)([A-Z\.])*[^a-z\)\W]
-02:allcaps	([\p{Lu}]+)([\p{Lu}\.])*[^\p{Ll}\)]
+#02:allcaps	([\p{Lu}]+)([\p{Lu}\.])*[^\p{Ll}\)]
+
+# fix the space tailing problem
+02:allcaps	([\p{Lu}]+)([\p{Lu}\.])*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)
 
 # complete latin char [a-zA-Z]
 # example: 29292ADB222

@@ -256,7 +256,7 @@ class SegmentationFunction(object):
                 string_left_trimmed = s[max_matched_len:].lstrip()
 
                 # process the token we found
-                if 'name' in token_type and len(string_left_trimmed) > 0:
+                if 'name' in token_type and len(string_left_trimmed) > 0:   # we have dropped the name regex pattern.
                     tup = self.processName(next_token, string_left_trimmed)
                     if len(tup[0]) != len(next_token):
                         next_token = tup[0]
@@ -420,8 +420,8 @@ class Tokenizer(object):
     """Vietnamese Tokenizer
     """
 
-    def __init__(self, lexicon_src = None, regexp_src = None, bigramFilename = None,
-                whilespaceModelFilename=None):
+    def __init__(self, lexicon_src=None, regexp_src=None, bigramFilename=None,
+                whilespaceModelFilename=None, case_sensitive=False):
         """Construct the tokenizer
 
         Parameters
@@ -438,19 +438,19 @@ class Tokenizer(object):
         this_dir, this_filename = os.path.split(__file__)
 
         # use default files if not provided
-        if not lexicon_src:
-            lexicon_src = os.path.join(this_dir, 'dat/tok/lexicon.xml')
         if not regexp_src:
             regexp_src = os.path.join(this_dir, 'dat/tok/regexp-py.txt')
         if not bigramFilename:
             bigramFilename = os.path.join(this_dir, 'dat/tok/syllables2M.arpa')
-            
-        self.lexicon = Lexicon()
 
-        if type(lexicon_src) is str:
-            self.lexicon.load(lexicon_src)
+        if lexicon_src:
+            self.lexicon = Lexicon(default=False, case_sensitive=case_sensitive)
+            if type(lexicon_src) is str:
+                self.lexicon.load(lexicon_src)
+            else:
+                self.lexicon.loadFromList(lexicon_src)
         else:
-            self.lexicon.loadFromList(lexicon_src)
+            self.lexicon = Lexicon(case_sensitive=case_sensitive)
 
         self.classifier = None
         self.graph = PhraseGraph(self)

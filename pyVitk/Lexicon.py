@@ -68,7 +68,7 @@ class Lexicon(object):
     """
     The tokenizer lexicon dictionary
     """
-    def __init__(self, default=True, case_sensitive=True):
+    def __init__(self, default=True, case_sensitive=False):
         """
         The initializer of lexicon
         :param default: True to load default defined lexicon xml file.

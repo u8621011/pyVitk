@@ -2,13 +2,15 @@
 
 import xml.etree.ElementTree as etree
 import sys
-from nltk.collections import Trie
 from datetime import datetime, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
 class Node(object):
+    """
+    The trie node structure. c = '_' for root node, c='*' for leaf node.
+    """
     def __init__(self, c):
         self.c = c
         self.children = []
@@ -51,7 +53,7 @@ class Node(object):
 
     def hasWord(self, s: str, pos: int) -> bool:
         if pos == len(s):
-            for j in range(0 , len(self.children)):
+            for j in range(0, len(self.children)):
                 if self.children[j].c == '*':
                     return True
             return False
@@ -63,15 +65,28 @@ class Node(object):
 
 
 class Lexicon(object):
-    """Load and build prefix tree from lexcion.xml"""
-    def __init__(self):
-        # the original trie implementation
-        # self.root = Node('_')
-        self.root = None
+    """
+    The tokenizer lexicon dictionary
+    """
+    def __init__(self, default=True, case_sensitive=True):
+        """
+        The initializer of lexicon
+        :param default: True to load default defined lexicon xml file.
+        :param case_sensitive:
+        """
         self.numNodes = 0
+        self.case_sensitive = case_sensitive
+        if default:
+            import os
+            this_dir, this_filename = os.path.split(__file__)
+            if case_sensitive:
+                lexicon_src = os.path.join(this_dir, 'dat/tok/lexicon.xml')
+            else:
+                lexicon_src = os.path.join(this_dir, 'dat/tok/lexicon-insensitive.xml')
+            self.load(lexicon_src)
+        else:
+            self.root = Node('_')
 
-        #self.trie = Trie()
-        self.trie = None
     def load(self, filename: str):
         xml = etree.parse(filename)
         n = xml.getroot()
@@ -85,10 +100,10 @@ class Lexicon(object):
         lex_list: list of str
 
         """
-        self.trie = Trie()
+        self.root = Node('_')   # the root node.
 
         for item in lex_list:
-            self.trie.insert(item)
+            self.insertWord(item)
 
     def loadNode (self, n):
         node = Node(n.attrib['c'])
@@ -100,57 +115,32 @@ class Lexicon(object):
         return node
 
     def insertWord(self, word: str):
-        if self.root:
+        if self.case_sensitive:
             self.root.insertWord(word, 0)
-        elif self.trie:
-            self.trie.insert(word)
         else:
-            raise ValueError('Dunno the type of trie tree structure.')
+            self.root.insertWord(word.lower(), 0)
 
     def hasWord(self, word: str) -> bool:
-        if self.root:
-            return self.hasWordOrg(word)
-        elif self.trie:
-            return self.hasWordTrie(word)
+        if self.case_sensitive:
+            return self.root.hasWord(word, 0)
         else:
-            raise ValueError('Lexicon Dictionary is not be initialized')
-
-    def hasWordOrg(self, word: str) -> bool:
-        return self.root.hasWord(word, 0)
-
-    def hasWordTrie(self, text):
-        if self.trie:
-            n = len(text)
-            curTrie = self.trie
-            for i in range(n):
-                if text[i] in curTrie:
-                    curTrie = curTrie[text[i]]
-                else:
-                    return False
-            if Trie.LEAF in curTrie:
-                return True
-
-        else:
-            return False
+            return self.root.hasWord(word.lower(), 0)
 
     def serialize_to_xml(self, ofile: str):
-        if self.root:
-            # build ElementTree from root structure
-            et_root = etree.Element('n', attrib={'c': '_'})
-            if len(self.root.children) > 0:
-                for child in self.root.children:
-                    if child.c == '*':
-                        etree.SubElement(et_root, 'n', {'c': '*'})
-                    else:
-                        et_child = etree.SubElement(et_root, 'n', {'c': child.c})
-                        self.build_etree_from_node(et_child, child)
-            else:
-                etree.SubElement(et_root, 'n', {'c': '*'})
-
-            tree = etree.ElementTree(et_root)
-            tree.write(ofile, encoding='utf-8', xml_declaration=True)
+        # build ElementTree from root structure
+        et_root = etree.Element('n', attrib={'c': '_'})
+        if len(self.root.children) > 0:
+            for child in self.root.children:
+                if child.c == '*':
+                    etree.SubElement(et_root, 'n', {'c': '*'})
+                else:
+                    et_child = etree.SubElement(et_root, 'n', {'c': child.c})
+                    self.build_etree_from_node(et_child, child)
         else:
-            raise NotImplementedError
+            etree.SubElement(et_root, 'n', {'c': '*'})
+
+        tree = etree.ElementTree(et_root)
+        tree.write(ofile, encoding='utf-8', xml_declaration=True)
 
     def build_etree_from_node(self, et_parent, node_parent):
         if node_parent.children is not None and len(node_parent.children) > 0:
@@ -187,27 +177,4 @@ class Lexicon(object):
                 charList.append(child.c)
                 self.flttenRecursive(fwrite, child, charList)
                 charList.pop()
-
-if __name__ == '__main__':
-    cmd = sys.argv[1]
-
-    if cmd == 'load':
-        n = datetime.now()
-        l = Lexicon()
-        l.load(sys.argv[2])
-        d = datetime.now() - n
-        logger.debug('timedelta to run: {}'.format(d))
-    elif cmd == 'flat':
-        l = Lexicon()
-        l.flattenToFile(sys.argv[2])
-    elif cmd == 'loadflat':
-        n = datetime.now()
-        with open(sys.argv[2], encoding='utf8') as f:
-            l = Lexicon()
-            for line in f:
-                if len(line) > 0:
-                    l.trie.insert(line)
-
-        d = datetime.now() - n
-        logger.debug('timedelta to run: {}'.format(d))
 

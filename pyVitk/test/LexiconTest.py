@@ -6,29 +6,65 @@ import pyVitk.Lexicon as Lexicon
 
 class LexiconTestCase(unittest.TestCase):
     def setUp(self):
-        self.lexicon = Lexicon.Lexicon()
-        self.lexicon.load('../dat/tok/lexicon.xml')
+        pass
+
     def tearDown(self):
-        self.lexicon = None
+        pass
 
-    def test_has_word(self):
-        r = self.lexicon.hasWord('ai hoài')
+    def test_has_word_sensitive(self):
+        lexicon = Lexicon.Lexicon(case_sensitive=True)
+        r = lexicon.hasWord('ai hoài')
         self.assertTrue(r)
 
-        r = self.lexicon.hasWord('ngoại bang')
+        r = lexicon.hasWord('ngoại bang')
         self.assertTrue(r)
 
-        r = self.lexicon.hasWord('ngoại giao nhân dân')
+        r = lexicon.hasWord('ngoại giao nhân dân')
         self.assertTrue(r)
 
-        r = self.lexicon.hasWord('dự án')
+        r = lexicon.hasWord('dự án')
         self.assertTrue(r)
 
-        r = self.lexicon.hasWord('phiên bản')
-        self.assertTrue(r)
-
-        r = self.lexicon.hasWord('ai Hoài')
+        r = lexicon.hasWord('Dự án')
         self.assertFalse(r)
 
-        r = self.lexicon.hasWord('tiếng việt')
+        r = lexicon.hasWord('phiên bản')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('ai hoài')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('ai Hoài')
+        self.assertFalse(r)
+
+        r = lexicon.hasWord('tiếng việt')
+        self.assertFalse(r)
+
+    def test_has_word_insensitive(self):
+        lexicon = Lexicon.Lexicon(case_sensitive=False)
+        r = lexicon.hasWord('ai hoài')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('ngoại bang')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('ngoại giao nhân dân')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('dự án')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('Dự án')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('phiên bản')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('ai hoài')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('ai Hoài')
+        self.assertTrue(r)
+
+        r = lexicon.hasWord('tiếng việt')
         self.assertFalse(r)

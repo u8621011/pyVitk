@@ -2,7 +2,7 @@
 
 import unittest
 import logging
-from pyVitk.test.helper import setup_logging
+from pyVitk.helper import setup_logging
 from pyVitk.Dijkstra2 import Graph, dijkstra, shortest_path
 
 # setup the logger

@@ -1,7 +1,7 @@
 # coding=UTF-8
 import unittest
 import logging
-from pyVitk.test.helper import setup_logging
+from pyVitk.helper import setup_logging
 from pyVitk.Tokenizer import PhraseGraph2, Tokenizer
 from pyVitk.Bigrams import Bigrams
 

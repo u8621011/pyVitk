@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 import logging
-from pyVitk.test.helper import setup_logging
+from pyVitk.helper import setup_logging
 from pyVitk.Tokenizer import Tokenizer, PhraseGraph, PhraseGraph2, SegmentationFunction
 
 # setup the logger
@@ -150,6 +150,12 @@ class TokenzierTestCase(TestCase):
 
     def test_tokenize_line8(self):
         s = '• Con gái của ba hả.↵• Dạ con chào ba.'
+        t = self.tokenizer.tokenizeLine(s)
+        logger.debug('Test tokenizeline, s: ' + s)
+        logger.debug('Tokenized Result: {}'.format(t))
+
+    def test_tokenize_line9(self):
+        s = 'Tiết độ sứ Tiết tiếu lâm tiềm Lực.'
         t = self.tokenizer.tokenizeLine(s)
         logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))

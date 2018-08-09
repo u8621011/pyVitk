@@ -4,10 +4,16 @@ import os
 import json
 
 
-def setup_logging(default_path='logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
+def setup_logging(default_path=None, default_level=logging.INFO, env_key='LOG_CFG'):
     """Setup logging configuration
     logging practice from: https://fangpenlin.com/posts/2012/08/26/good-logging-practice-in-python/
     """
+    if default_path is None:
+        import os
+
+        this_dir, this_filename = os.path.split(__file__)
+        default_path = os.path.join(this_dir, 'logging.json')
+
     path = default_path
     value = os.getenv(env_key, None)
     if value:

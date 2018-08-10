@@ -271,9 +271,17 @@ class SegmentationFunction(object):
                         next_token = tup[0]
                         s = string_left_trimmed = tup[1]
                         token_type = "unit"
+                    else:
+                        s = string_left_trimmed
 
-                    logger.debug('appending new token, type: {}, token: {}'.format(token_type, next_token))
-                    tokens.append((token_type, next_token))
+                    token_start_pos = token_start_pos_base
+                    token_end_pos = token_start_pos + len(next_token)
+                    token_start_pos_base = token_end_pos + (
+                            len(string_left) - len(string_left_trimmed))  # the next base
+                    logger.debug('appending new token, type: %s, token: %s', token_type, next_token)
+                    t = LexiconToken(type=token_type, text=next_token,
+                                     start_char_pos=token_start_pos, end_char_pos=token_end_pos)
+                    tokens.append(t)
                 elif 'phrase' in token_type:
                     if next_token.find(' ') > 0:    # multi-syllabic phrase
                         if self.tokenizer.classifier is not None:
@@ -300,6 +308,8 @@ class SegmentationFunction(object):
                                          end_char_pos=token_end_pos)
                         tokens.append(t)
                     s = string_left_trimmed
+                    token_start_pos_base = token_end_pos + (
+                            len(string_left) - len(string_left_trimmed))  # the next base
                 else:
                     token_start_pos = token_start_pos_base
                     token_end_pos = token_start_pos_base + max_matched_len
@@ -515,6 +525,13 @@ class Tokenizer(object):
                 # write to output file
 
     def tokenizeLine(self, line: str, concat=False) -> list:
+        """
+        Line Tokenizing.  Precondition of calling this:
+        1. line must be newline char dropped before calling
+        :param line:
+        :param concat:
+        :return:
+        """
         seg = SegmentationFunction(self)
 
         tokens = seg.segment(line, concat)

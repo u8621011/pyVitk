@@ -177,6 +177,14 @@ class TokenzierTestCase(TestCase):
         logger.debug('Test tokenizeline, s: ' + s)
         logger.debug('Tokenized Result: {}'.format(t))
 
+    def test_tokenize_line12(self):
+        s = "Kem Xôi TV: Tập 74 - Dài bao nhiêu là đủ,"
+        self.print_tokenization(s)
+
+    def print_tokenization(self, s):
+        t = self.tokenizer.tokenizeLine(s)
+        logger.debug('Test tokenizeline, s: ' + s)
+        logger.debug('Tokenized Result: {}'.format(t))
 
     def test_serialize_to_xml(self):
         self.tokenizer.to_lexicon_xml_file('test.xml')

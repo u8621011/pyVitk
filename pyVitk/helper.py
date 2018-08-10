@@ -10,11 +10,10 @@ def setup_logging(default_path=None, default_level=logging.INFO, env_key='LOG_CF
     """
     if default_path is None:
         import os
-
         this_dir, this_filename = os.path.split(__file__)
-        default_path = os.path.join(this_dir, 'logging.json')
-
-    path = default_path
+        path = os.path.join(this_dir, 'logging.json')
+    else:
+        path = default_path
     value = os.getenv(env_key, None)
     if value:
         path = value

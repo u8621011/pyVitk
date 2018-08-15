@@ -498,7 +498,7 @@ class Tokenizer(object):
         """"Return list of lexicon strings. None if lexicon of tokenzier is not initialized properly.
         """
         if self.lexicon:
-            return return self.lexicon.flatten_to_list()
+            return self.lexicon.flatten_to_list()
 
         return None
 

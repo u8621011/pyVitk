@@ -494,6 +494,14 @@ class Tokenizer(object):
         else:
             self.bigrams = None
 
+    def get_lexicons_list(self) -> List[str]:
+        """"Return list of lexicon strings. None if lexicon of tokenzier is not initialized properly.
+        """
+        if self.lexicon:
+            return return self.lexicon.flatten_to_list()
+
+        return None
+
     def to_lexicon_xml_file(self, ofile: str):
         """Serialize the lexicon sturcture into xml file
         """

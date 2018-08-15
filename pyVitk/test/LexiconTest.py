@@ -11,6 +11,11 @@ class LexiconTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_flatten_to_list(self):
+        lexicon = Lexicon.Lexicon(case_sensitive=True)
+        lst = lexicon.flatten_to_list()
+        self.assertNotEqual(0, len(lst))
+
     def test_has_word_sensitive(self):
         lexicon = Lexicon.Lexicon(case_sensitive=True)
         r = lexicon.hasWord('ai hoài')

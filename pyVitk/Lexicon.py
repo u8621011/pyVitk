@@ -3,6 +3,7 @@
 import xml.etree.ElementTree as etree
 import sys
 from datetime import datetime, timedelta
+from typing import List
 import logging
 
 logger = logging.getLogger(__name__)
@@ -178,3 +179,24 @@ class Lexicon(object):
                 self.flattenRecursive(fwrite, child, charList)
                 charList.pop()
 
+    def flatten_to_list_recursive(self, lexicon_lst: List[str], node_head: Node, char_list: List[str]):
+        for child in node_head.children:
+            if child.c == '*':
+                lexicon_lst.append(''.join(char_list))
+            else:
+                char_list.append(child.c)
+                self.flatten_to_list_recursive(lexicon_lst, child, char_list)
+                char_list.pop()
+
+    def flatten_to_list(self) -> List[str]:
+        cur_char_list = []
+        lst_return = []
+        for child in self.root.children:
+            if child.c == '*':
+                lst_return.append(''.join(cur_char_list))
+            else:
+                cur_char_list.append(child.c)
+                self.flatten_to_list_recursive(lst_return, child, cur_char_list)
+                cur_char_list.pop()
+
+        return lst_return

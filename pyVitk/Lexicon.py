@@ -163,18 +163,18 @@ class Lexicon(object):
                 f.write('\n')
             else:
                 curCharList.append(child.c)
-                self.flttenRecursive(f, child, curCharList)
+                self.flattenRecursive(f, child, curCharList)
                 curCharList.pop()
 
         f.close()
 
-    def flttenRecursive(self, fwrite, nodeHead: Node, charList: list):
+    def flattenRecursive(self, fwrite, nodeHead: Node, charList: list):
         for child in nodeHead.children:
             if child.c == '*':
                 fwrite.write(''.join(charList))
                 fwrite.write('\n')
             else:
                 charList.append(child.c)
-                self.flttenRecursive(fwrite, child, charList)
+                self.flattenRecursive(fwrite, child, charList)
                 charList.pop()
 

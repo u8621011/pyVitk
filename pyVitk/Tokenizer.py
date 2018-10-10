@@ -32,7 +32,7 @@ class PhraseGraph(object):
         self.n = len(self.syllables)
 
         if self.n > 128:
-            logger.info('Phrase too long (>= 128 syllables), tokenization may be slow...')
+            logger.warning('Phrase too long (>= 128 syllables), tokenization may be slow...')
             logger.info(phrase)
 
         # initialize the edges structure

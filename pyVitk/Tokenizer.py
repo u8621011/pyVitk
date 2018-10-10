@@ -7,84 +7,11 @@ from typing import List
 from .Lexicon import Lexicon
 from .Bigrams import Bigrams
 from .Dijkstra import Dijkstra
-from .Dijkstra2 import Graph, shortest_path
 from pyVitk.DataStructure import LexiconToken
 
 
 logger = logging.getLogger(__name__)
 
-class PhraseGraph2(object):
-    def __init__(self, tokenizer: 'Tokenizer', bigrams: 'Bigrams' = None):
-        self.tokenizer = tokenizer
-        self.bigrams = bigrams
-        self.graph = Graph()
-        self.syllables = None
-        self.n = None
-
-    def makeGraph(self, phrase: str):
-        self.syllables = phrase.split()
-
-        self.syllables.insert(0, '<s>')
-        self.syllables.append('</s>')
-
-        self.n = len(self.syllables)
-        if self.n > 128:
-            logger.info('Phrase too long (>= 128 syllables), tokenization may be slow...')
-            logger.info(phrase)
-
-        edge_count = [0] * self.n
-        for i in range(1, self.n - 1):
-            token_prob = token = self.syllables[i]
-            for j in range(i, self.n - 1):
-                if j > i + 10:
-                    break   # we only process first 10th tokens.
-                if self.tokenizer.lexicon.hasWord(token):     # can be segmented out
-                    if self.bigrams:
-                        self.graph.add_edge(i-1, j, self.bigrams.logConditionalProb(self.syllables[i-1], token),
-                                            add_vertex=True)
-                    else:
-                        self.graph.add_edge(i-1, j, 1, add_vertex=True)
-                    edge_count[j] = edge_count[j] + 1
-
-                token = token + " " + self.syllables[j + 1]
-                token_prob = token_prob + "_" + self.syllables[j + 1]
-
-        # make sure that the graph is connected by adding adjacent edges if necessary
-        for i in reversed(range(1, self.n)):
-            if edge_count[i] == 0:  # i cannot reach by any previous node
-                if self.bigrams:
-                    self.graph.add_edge(i - 1, i, self.bigrams.logConditionalProb(self.syllables[i-1], self.syllables[i]),
-                                        add_vertex=True)
-                else:
-                    self.graph.add_edge(i - 1, i, 1, add_vertex=True)
-
-        logger.debug('"{}" makeGraph result : {}'.format(phrase, self.graph))
-
-    def shortestPath(self) -> list:
-        if self.bigrams:
-            # find shortest path with maximum the possibility
-            return shortest_path(self.graph, 0, self.n - 1, find_min=False)
-        else:
-            return shortest_path(self.graph, 0, self.n - 1)
-
-    def get_words(self) -> list:
-        lst_words = []
-
-        start_node = None
-        path = self.shortestPath()
-        for stop_node in path:
-            if start_node is not None:
-                if stop_node == self.n - 1:
-                    if start_node + 1 != stop_node:
-                        words = ' '.join(self.syllables[start_node + 1: stop_node])
-                        lst_words.append(words)
-                else:
-                    words = ' '.join(self.syllables[start_node + 1: stop_node + 1])
-                    lst_words.append(words)
-
-            start_node = stop_node
-
-        return lst_words
 
 class PhraseGraph(object):
     def __init__(self, tokenizer: 'Tokenizer'):
@@ -288,8 +215,7 @@ class SegmentationFunction(object):
                             raise NotImplementedError
                         else:
                             # segment the phrase using a phrase graph
-                            words = self.tokenizePhrase(next_token)
-                            #words = self.tokenizePhrase2(nextToken)
+                            words = self.tokenizePhrase(next_token, concat)
                             if words is not None:
                                 token_start_pos = token_start_pos_base
                                 for i in range(len(words)):
@@ -399,17 +325,8 @@ class SegmentationFunction(object):
                 currentToken = firstSyllable
         return currentToken, s
 
-    def tokenizePhrase2(self, phrase: str) -> List[str]:
-        """
-        Tokenizes a phrase and use bigram to search the shorest path if bigram exist.
-        :param phrase:
-        :return:
-        """
-        self.tokenizer.graph2.makeGraph(phrase)
-        return self.tokenizer.graph2.get_words()
 
-
-    def tokenizePhrase(self, phrase: str)->List[str]:
+    def tokenizePhrase(self, phrase: str, concat=False)->List[str]:
         """
         Tokenizes a phrase.
         :param phrase: 
@@ -422,7 +339,7 @@ class SegmentationFunction(object):
             if self.tokenizer.bigrams is not None:
                 best = self.tokenizer.graph.select(paths)
                 selectedPath = paths[best]
-            return self.tokenizer.graph.words(selectedPath)
+            return self.tokenizer.graph.words(selectedPath, concat)
         return []
 
 
@@ -464,7 +381,6 @@ class Tokenizer(object):
 
         self.classifier = None
         self.graph = PhraseGraph(self)
-        self.graph2 = PhraseGraph2(self)
 
         logger.debug('Loading pattern file.')
         # regex

@@ -83,6 +83,6 @@
 20:url	((http)|(https)|(ftp))\://\w[\-\w]*\w+(\.\w+)+(/[\w\-]+)*(\.\w+)?
 21:other	[\W]
 
-22:math_unit	((?i)(km³|km²|m³|m²|cm³|m²|s²|a²|b²|c²|ft³|x²|y²|z²))
+22:math_unit	((?i)([a-z]*[a-z]³|[a-z]*[a-z]²))
 
 prefix	(Ông|Bà|Anh|Chị|Em|Cô|Bác|Dì|Cậu|Mợ|Chú|Thím|Cu|Thằng|Cái|Tỉnh|Quận|Huyện|Phường|Xã|Bộ|Sở|Cục|Ban|Ngành|Theo)

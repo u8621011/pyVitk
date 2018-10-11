@@ -125,7 +125,7 @@ class TokenzierTestCase(TestCase):
             'BÍCH PHƯƠNG - Bao Giờ Lấy Chồng? [OFFICIAL M/V]',
             'Kem Xôi TV: Tập 74 - Dài bao nhiêu là đủ,',
             'km² và Öland khoảng',
-            'Km² và Öland khoảng',
+            'KM² và Öland khoảng',
         ]
         expected = [
             ['là',  'ngôn_ngữ',  'có',  'nguồn_gốc', 'bản_địa'],

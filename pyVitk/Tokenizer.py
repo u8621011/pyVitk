@@ -31,9 +31,9 @@ class PhraseGraph(object):
         self.syllables = phrase.split()
         self.n = len(self.syllables)
 
-        if self.n > 128:
-            logger.warning('Phrase too long (>= 128 syllables), tokenization may be slow...')
-            logger.info(phrase)
+        # if self.n > 128:
+        #     logger.warning('Phrase too long (>= 128 syllables), tokenization may be slow...')
+        #     logger.info(phrase)
 
         # initialize the edges structure
         for j in range(self.n + 1):
@@ -43,6 +43,8 @@ class PhraseGraph(object):
             token = self.syllables[i]
             j = i
             while j < self.n:
+                if j > 20:  # we only check the first 20th tokens. eg, we assume not phrase len exceed 20 tokens.
+                    break
                 if self.tokenizer.lexicon.hasWord(token):
                     self.edges[j+1].append(i)
                 j += 1

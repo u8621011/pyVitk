@@ -23,7 +23,7 @@ setuptools.setup(
         'nltk==3.2.4',
         'PyNLPl==1.1.8',
         'beautifulsoup4==4.6.0',
-        'requests==2.19.1',
+        'requests>=2.20.0',
         'opencc-python-reimplemented==0.1.4'
     ],
     include_package_data=True,

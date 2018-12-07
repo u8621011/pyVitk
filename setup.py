@@ -24,6 +24,7 @@ setuptools.setup(
         'PyNLPl==1.1.8',
         'beautifulsoup4==4.6.0',
         'requests==2.19.1',
+        'opencc-python-reimplemented==0.1.4'
     ],
     include_package_data=True,
 )

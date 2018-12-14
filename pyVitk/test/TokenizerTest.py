@@ -24,6 +24,11 @@ class TokenzierTestCase(TestCase):
         logger.debug('End TokenizerTest')
 
     def assert_expected_tokens(self, tokens, expections):
+        logger.info('tokenized tokens: %r', tokens)
+
+        # length equal?
+        self.assertEqual(len(tokens), len(expections))
+
         for t, e in zip(tokens, expections):
             self.assertEqual(t.text, e)
 
@@ -90,6 +95,9 @@ class TokenzierTestCase(TestCase):
             'PHD | Xem Đi Xem Lại Cả 1000 Lần Mà Vẫn Không Thể Nhịn Được Cười | Funny Videos,',
             'BÍCH PHƯƠNG - Bao Giờ Lấy Chồng? [OFFICIAL M/V]',
             'Kem Xôi TV: Tập 74 - Dài bao nhiêu là đủ,',
+            '[Chân em đi]',
+            '{Chân em đi}',
+            'ABC(Chân em đi)',
         ]
         expected = [
             ['là',  'ngôn ngữ',  'có',  'nguồn gốc', 'bản địa'],
@@ -103,7 +111,10 @@ class TokenzierTestCase(TestCase):
             ['Tiết', 'độ', 'sứ', 'Tiết', 'tiếu lâm', 'tiềm', 'Lực', '.'],
             ['PHD', '|', 'Xem', 'Đi', 'Xem', 'Lại', 'Cả', '1000', 'Lần', 'Mà', 'Vẫn', 'Không', 'Thể', 'Nhịn', 'Được', 'Cười', '|', 'Funny', 'Videos', ','],
             ['BÍCH', 'PHƯƠNG', '-', 'Bao', 'Giờ', 'Lấy', 'Chồng', '?', '[', 'OFFICIAL', 'M/V', ']', ],
-            ['Kem', 'Xôi', 'TV', ':', 'Tập', '74', '-', 'Dài', 'bao nhiêu', 'là', 'đủ', ',']
+            ['Kem', 'Xôi', 'TV', ':', 'Tập', '74', '-', 'Dài', 'bao nhiêu', 'là', 'đủ', ','],
+            ['[', 'Chân',  'em',  'đi', ']'],
+            ['{', 'Chân', 'em', 'đi', '}'],
+            ['ABC', '(', 'Chân', 'em', 'đi', ')'],
         ]
 
         for s, e in zip(lines, expected):

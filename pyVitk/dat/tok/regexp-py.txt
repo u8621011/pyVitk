@@ -1,6 +1,6 @@
 # example: i am a lowercase string.
 
-01:phrase	\w+(?:\s\w+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))
+01:phrase	\w+(?:\s\w+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*\(\)\[\{\]\}]+|$)(?<!(http|https|ftp))
 
 # for begin char upper case allowed.
 #01:phrase	[\p{Lu}]{0,1}[\p{Ll}]+(?:\s[\p{Ll}]+)*(?=[\s\.,\!\?\-\:;"“”'\(\)*]+|$)(?<!(http|https|ftp))

@@ -341,7 +341,15 @@ class SegmentationFunction(object):
             if self.tokenizer.bigrams is not None:
                 best = self.tokenizer.graph.select(paths)
                 selectedPath = paths[best]
-            return self.tokenizer.graph.words(selectedPath, concat)
+
+            try:
+                words = self.tokenizer.graph.words(selectedPath, concat)
+            except:
+                logger.exception('Exception occurred while tokenizing phrase: %s', phrase)
+                raise
+
+            return words
+            
         return []
 
 
@@ -372,7 +380,7 @@ class Tokenizer(object):
         if not bigramFilename:
             bigramFilename = os.path.join(this_dir, 'dat/tok/syllables2M.arpa')
 
-        if lexicon_src:
+        if lexicon_src is not None:
             self.lexicon = Lexicon(default=False, case_sensitive=case_sensitive)
             if type(lexicon_src) is str:
                 self.lexicon.load(lexicon_src)

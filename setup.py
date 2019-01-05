@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pyVitk",
-    version="0.0.2",
+    version="0.0.4",
     author="Ted Chen",
     author_email="shapable.ted@gmail.com",
     description="A python version Vietnamese text processing toolkit",

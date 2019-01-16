@@ -98,6 +98,7 @@ class TokenzierTestCase(TestCase):
             '[Chân em đi]',
             '{Chân em đi}',
             'ABC(Chân em đi)',
+            'có một cái chén ăn và một "người hầu".'
         ]
         expected = [
             ['là',  'ngôn ngữ',  'có',  'nguồn gốc', 'bản địa'],
@@ -115,6 +116,7 @@ class TokenzierTestCase(TestCase):
             ['[', 'Chân',  'em',  'đi', ']'],
             ['{', 'Chân', 'em', 'đi', '}'],
             ['ABC', '(', 'Chân', 'em', 'đi', ')'],
+            ['có', 'một', 'cái', 'chén', 'ăn', 'và', 'một', '"', 'người', 'hầu', '".']
         ]
 
         for s, e in zip(lines, expected):
@@ -152,7 +154,7 @@ class TokenzierTestCase(TestCase):
             ['BÍCH', 'PHƯƠNG', '-', 'Bao', 'Giờ', 'Lấy', 'Chồng', '?', '[', 'OFFICIAL', 'M/V', ']', ],
             ['Kem', 'Xôi', 'TV', ':', 'Tập', '74', '-', 'Dài', 'bao_nhiêu', 'là', 'đủ', ','],
             ['km²', 'và', 'Öland', 'khoảng'],
-            ['KM²', 'và', 'Öland', 'khoảng']
+            ['KM²', 'và', 'Öland', 'khoảng'],
         ]
 
         for s, e in zip(lines, expected):

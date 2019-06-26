@@ -10,7 +10,7 @@ opencc-python-reimplemented==0.1.4
 PyNLPl==1.1.8
 pyparsing==2.2.0
 rdflib==4.2.2
-regex==2017.4.29
+regex==2019.6.8
 requests>=2.20.0
 six==1.11.0
-urllib3==1.23
+urllib3>=1.24.2

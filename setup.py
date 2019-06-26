@@ -20,7 +20,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ),
     install_requires=[
-        'regex==2017.4.29',
+        'regex==2019.6.8',
         'nltk==3.2.4',
         'PyNLPl==1.1.8',
         'beautifulsoup4==4.6.0',

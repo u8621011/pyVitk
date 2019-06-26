@@ -5,3 +5,7 @@ env/*
 **/__pycache__/*
 *.log
 test.xml
+
+/**/build/*
+/**/dist/*
+/**/pyVitk.egg-info/*

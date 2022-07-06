@@ -4,7 +4,7 @@ chardet==3.0.4
 httplib2==0.11.3
 idna==2.7
 isodate==0.6.0
-lxml==4.2.3
+lxml==4.9.1
 nltk==3.2.4
 opencc-python-reimplemented==0.1.4
 PyNLPl==1.1.8

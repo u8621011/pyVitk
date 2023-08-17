@@ -21,7 +21,7 @@ setuptools.setup(
     ),
     install_requires=[
         'regex==2019.6.8',
-        'nltk==3.2.4',
+        'nltk==3.6.6',
         'PyNLPl==1.1.8',
         'beautifulsoup4==4.6.0',
         'requests>=2.20.0',
